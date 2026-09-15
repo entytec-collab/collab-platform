@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="ENTYCOLLAB - Plataforma para programadores que buscan colaborar en proyectos. Publica, aplica y califica.">
+  <meta name="author" content="ENTYCOLLAB">
+  <title>ENTYCOLLAB | Colabora en Proyectos de Programación</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- ====================================================================
+       HEADER
+       ==================================================================== -->
+  <header class="site-header" id="header-public">
+    <div class="header-container">
+      <div class="logo-container">
+        <img src="img/logo.jpg" alt="Logo ENTYCOLLAB" class="site-logo">
+      </div>
+      <span class="badge-tag">Open Source Collaboration</span>
+      <h1>ENTYCOLLAB</h1>
+      <p class="welcome-msg" data-i18n="welcome">
+        Encuentra programadores para tu proyecto o únete a uno que te apasione.
+        Construye, colabora y crece profesionalmente.
+      </p>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="showView('login')" data-i18n="nav.login">Iniciar Sesión</button>
+        <button class="btn btn-outline" onclick="showView('register')" data-i18n="nav.register">Crear Cuenta</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Header para usuarios logueados (logo + nav + burbuja = una sola fila) -->
+  <header class="site-header logged-in-header" id="header-logged" style="display:none;">
+    <div class="header-container header-compact">
+      <div class="header-brand">
+        <div class="header-brand-logo">
+          <img src="img/logo.jpg" alt="Logo ENTYCOLLAB" class="site-logo-small">
+        </div>
+      </div>
+      <nav class="header-nav" id="nav-logged" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="#" class="nav-link active" onclick="showView('dashboard')" data-view="dashboard" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="#" class="nav-link" onclick="showView('projects')" data-view="projects" data-i18n="nav.projects">Proyectos</a></li>
+          <li><a href="#" class="nav-link" onclick="showView('people')" data-view="people" data-i18n="nav.people">Personas</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <button class="theme-toggle lang-toggle" id="lang-toggle" onclick="toggleLanguage()" title="Cambiar idioma" aria-label="Cambiar idioma">ES</button>
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Cambiar modo claro/oscuro" aria-label="Cambiar modo claro/oscuro"></button>
+        <div class="user-bubble-wrap" id="user-bubble-wrap">
+          <button class="user-bubble" id="user-bubble-btn" onclick="goToProfile(event)">
+            <span class="user-bubble-avatar" id="user-bubble-avatar"></span>
+            <span class="user-bubble-name" id="user-bubble-name"></span>
+            <span class="user-bubble-rating" id="user-bubble-rating">★ 0.0</span>
+            <span class="user-bubble-arrow" onclick="toggleUserMenu(event)">▾</span>
+          </button>
+          <div class="user-bubble-menu" id="user-bubble-menu" style="display:none;">
+            <a href="#" onclick="showView('my-projects'); closeUserMenu()" data-i18n="menu.myProjects">📂 Mis Proyectos</a>
+            <a href="#" onclick="showView('my-applications'); closeUserMenu()" data-i18n="menu.myApps">📋 Mis Postulaciones</a>
+            <a href="#" onclick="logout()" data-i18n="menu.logout">🚪 Cerrar Sesión</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       CONTENIDO PRINCIPAL
+       ==================================================================== -->
+  <main class="content-wrapper">
+
+    <!-- ====== VISTA: Login ====== -->
+    <section id="view-login" class="view-container" style="display:none;">
+      <div class="auth-card">
+        <h2 class="auth-title" data-i18n="login.title">Iniciar Sesión</h2>
+        <p class="auth-subtitle" data-i18n="login.subtitle">Accede a tu cuenta para continuar</p>
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="login-email" data-i18n="login.email">Correo Electrónico</label>
+            <input type="email" id="login-email" required placeholder="tu@email.com">
+          </div>
+          <div class="form-group">
+            <label for="login-password" data-i18n="login.password">Contraseña</label>
+            <input type="password" id="login-password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" data-i18n="login.submit">Ingresar</button>
+        </form>
+        <p class="auth-switch"><span data-i18n="login.switch">¿No tienes cuenta?</span> <a href="#" onclick="showView('register')" data-i18n="login.switchLink">Regístrate aquí</a></p>
+      </div>
+    </section>
+
+    <!-- ====== VISTA: Registro ====== -->
+    <section id="view-register" class="view-container" style="display:none;">
+      <div class="auth-card">
+        <h2 class="auth-title" data-i18n="register.title">Crear Cuenta</h2>
+        <p class="auth-subtitle" data-i18n="register.subtitle">Únete a la comunidad de desarrolladores</p>
+        <form id="register-form" onsubmit="handleRegister(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-name" data-i18n="register.name">Nombre</label>
+              <input type="text" id="reg-name" required placeholder="Tu nombre">
+            </div>
+            <div class="form-group">
+              <label for="reg-username" data-i18n="register.username">Usuario</label>
+              <input type="text" id="reg-username" required placeholder="@usuario" pattern="^[a-zA-Z0-9_]+$">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reg-email" data-i18n="login.email">Correo Electrónico</label>
+            <input type="email" id="reg-email" required placeholder="tu@email.com">
+          </div>
+          <div class="form-group">
+            <label for="reg-password" data-i18n="login.password">Contraseña</label>
+            <input type="password" id="reg-password" required placeholder="Mínimo 6 caracteres" minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="reg-skills" data-i18n="register.skills">Habilidades (separadas por coma)</label>
+            <input type="text" id="reg-skills" placeholder="JavaScript, Python, React, Node.js" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-bio" data-i18n="register.bio">Breve descripción</label>
+            <textarea id="reg-bio" rows="3" placeholder="Cuéntanos sobre ti y tu experiencia..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" data-i18n="register.submit">Crear Mi Cuenta</button>
+        </form>
+        <p class="auth-switch"><span data-i18n="register.switch">¿Ya tienes cuenta?</span> <a href="#" onclick="showView('login')" data-i18n="register.switchLink">Inicia sesión</a></p>
+      </div>
+    </section>
+
+    <!-- ====== VISTA: Inicio ====== -->
+    <section id="view-dashboard" class="view-container" style="display:none;">
+      <div class="section-block home-hero">
+        <h2 class="home-hero-title" id="home-hero-title">¡Hola, <span id="dash-username"></span>! 👋</h2>
+        <p class="home-hero-sub" data-i18n="dash.sub">Explora los proyectos más importantes de la comunidad y encuentra tu próximo reto.</p>
+      </div>
+
+      <div class="section-block">
+        <div class="section-header-row">
+          <h2 class="section-title" data-i18n="dash.featured">Proyectos Destacados</h2>
+          <button class="btn btn-primary" onclick="showView('projects')" data-i18n="dash.viewAll">Ver Todos →</button>
+        </div>
+        <div id="dash-featured-projects" class="projects-grid"></div>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section-title" data-i18n="dash.recent">Proyectos Recientes</h2>
+        <div id="dash-recent-projects" class="projects-grid"></div>
+      </div>
+    </section>
+
+    <!-- ====== VISTA: Proyectos disponibles ====== -->
+    <section id="view-projects" class="view-container" style="display:none;">
+      <div class="section-block">
+        <div class="section-header-row">
+          <h2 class="section-title" data-i18n="proj.mine">Proyectos en los que participo</h2>
+        </div>
+        <div id="my-enrolled-projects" class="projects-grid"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-header-row">
+          <h2 class="section-title" data-i18n="proj.new">Nuevos Proyectos</h2>
+          <button class="btn btn-primary" onclick="openModal('create-project-modal')" data-i18n="proj.newBtn">+ Nuevo Proyecto</button>
+        </div>
+
+        <div class="filters-bar">
+          <div class="form-group form-group-inline">
+            <input type="text" id="filter-search" placeholder="Buscar proyectos..." oninput="filterProjects()" data-i18n-placeholder="proj.searchPh">
+          </div>
+          <div class="form-group form-group-inline">
+            <button type="button" class="filters-toggle-btn" id="filter-category-btn" onclick="openCategoryFilterModal()" data-i18n="filter.allCat">Todas las categorías</button>
+          </div>
+          <div class="form-group form-group-inline">
+            <button type="button" class="filters-toggle-btn" id="filter-tech-btn" onclick="openTechFilterModal()" data-i18n="filter.allTech">Todas las tecnologías</button>
+          </div>
+        </div>
+
+        <div id="projects-list" class="projects-grid"></div>
+      </div>
+    </section>
+
+    <!-- ====== VISTA: Personas (colaboradores disponibles) ====== -->
+    <section id="view-people" class="view-container" style="display:none;">
+      <div class="section-block">
+        <div class="section-header-row">
+          <h2 class="section-title" data-i18n="nav.people">Personas</h2>
+        </div>
+        <p class="section-subtitle" data-i18n="people.subtitle">Encuentra colaboradores disponibles. Si quieres aparecer aquí, actívalo desde Mi Perfil (Estoy disponible para colaborar).</p>
+
+        <div class="filters-bar">
+          <div class="form-group form-group-inline">
+            <input type="text" id="people-search" placeholder="Buscar por nombre, usuario o tecnología..." oninput="filterPeople()" data-i18n-placeholder="people.searchPh">
+          </div>
+          <div class="form-group form-group-inline">
+            <button type="button" class="filters-toggle-btn" id="filter-people-tech-btn" onclick="openPeopleTechFilterModal()" data-i18n="filter.allTech">Todas las tecnologías</button>
+          </div>
+        </div>
+
+        <div id="people-list" class="people-grid"></div>
+      </div>
+    </section>
+
+    <!-- ====== VISTA: Mis Proyectos ====== -->
+    <section id="view-my-projects" class="view-container" style="display:none;">
+      <div class="section-block">
+        <div class="section-header-row">
+          <h2 class="section-title" data-i18n="myProjects.title">Mis Proyectos</h2>
+          <button class="btn btn-primary" onclick="openModal('create-project-modal')" data-i18n="proj.newBtn">+ Nuevo Proyecto</button>
+        </div>
+        <div id="my-projects-list" class="projects-grid"></div>
+      </div>
+    </section>
+
+    <!-- ====== VISTA: Mis Postulaciones ====== -->
+    <section id="view-my-applications" class="view-container" style="display:none;">
+      <div class="section-block">
+        <h2 class="section-title" data-i18n="myApps.title">Mis Postulaciones</h2>
+        <div id="my-applications-list" class="projects-grid"></div>
+      </div>
+    </section>
+
+    <!-- ====== VISTA: Perfil ====== -->
+    <section id="view-profile" class="view-container" style="display:none;">
+      <div class="section-block">
+        <div class="section-header-row profile-header-row">
+          <h2 class="section-title" data-i18n="profile.title">Mi Perfil</h2>
+          <div class="availability-card">
+            <div class="availability-info">
+              <strong id="profile-availability-title" data-i18n="profile.availableToggle">Colaborar</strong>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="profile-availability-toggle" onchange="toggleMyAvailability()">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="profile-layout">
+          <div class="profile-info">
+            <div class="profile-avatar" id="profile-avatar"></div>
+            <div class="profile-photo-actions">
+              <label class="btn btn-ghost btn-sm profile-photo-btn" for="profile-avatar-input" data-i18n="profile.changePhoto">📷 Cambiar Foto</label>
+              <input type="file" id="profile-avatar-input" accept="image/*" style="display:none;" onchange="handleProfilePhoto(event)">
+              <button class="btn btn-ghost btn-sm" id="profile-photo-remove" style="display:none;" onclick="removeProfilePhoto()" data-i18n="profile.removePhoto">Quitar Foto</button>
+            </div>
+            <h3 id="profile-name"></h3>
+            <p class="profile-username" id="profile-username-display"></p>
+            <div class="profile-rating-display" id="profile-rating-stars"></div>
+            <p class="profile-bio" id="profile-bio"></p>
+            <div class="profile-skills" id="profile-skills"></div>
+            <button class="btn btn-ghost btn-sm profile-edit-btn" onclick="toggleEditProfile()" data-i18n="profile.editBtn">✏️ Editar Perfil</button>
+            <div id="edit-profile-panel" style="display:none;" class="edit-skills-panel">
+              <div class="form-group">
+                <label for="profile-bio-input" data-i18n="profile.bioLabel">Descripción</label>
+                <textarea id="profile-bio-input" rows="3" placeholder="Cuéntanos sobre ti, tu experiencia e intereses..." data-i18n-placeholder="profile.bioPh"></textarea>
+              </div>
+              <div class="form-group">
+                <label data-i18n="profile.skillsLabel">Tecnologías que dominas</label>
+                <p class="form-hint" data-i18n="profile.skillsHint">Selecciona las tecnologías que dominas</p>
+                <div class="tech-buttons tech-buttons-form" id="edit-skills-buttons"></div>
+              </div>
+              <div class="edit-skills-actions">
+                <button class="btn btn-primary btn-sm" onclick="saveProfile()" data-i18n="profile.saveBtn">Guardar</button>
+                <button class="btn btn-ghost btn-sm" onclick="toggleEditProfile(true)" data-i18n="profile.cancelBtn">Cancelar</button>
+              </div>
+            </div>
+          </div>
+          <div class="profile-history">
+            <h3 data-i18n="profile.history">Historial de Proyectos</h3>
+            <div id="profile-history-list"></div>
+            <h3 data-i18n="profile.ratingsReceived">Calificaciones Recibidas</h3>
+            <div id="profile-received-ratings"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================================================================
+       MODAL: Crear Proyecto
+       ==================================================================== -->
+  <div class="modal-overlay" id="create-project-modal" style="display:none;">
+    <div class="modal-card modal-large">
+      <button class="modal-close" onclick="closeModal('create-project-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="createProject.title">Crear Nuevo Proyecto</h2>
+      <form id="create-project-form" onsubmit="handleCreateProject(event)">
+        <div class="form-group">
+          <label for="proj-title" data-i18n="createProject.name">Nombre del Proyecto</label>
+          <input type="text" id="proj-title" required placeholder="Ej: App de tareas colaborativas" data-i18n-placeholder="createProject.namePh">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="proj-category" data-i18n="createProject.category">Categoría del Proyecto</label>
+            <select id="proj-category" required onchange="handleCategoryChange()">
+              <option value="" data-i18n="createProject.select">Seleccionar...</option>
+              <option value="web">Desarrollo Web</option>
+              <option value="mobile">Desarrollo Móvil</option>
+              <option value="desktop">Aplicaciones de Escritorio</option>
+              <option value="ai">Inteligencia Artificial</option>
+              <option value="game">Desarrollo de Videojuegos</option>
+              <option value="backend">Backend / APIs</option>
+              <option value="devops">DevOps / Infraestructura</option>
+              <option value="other">Otra (escribir)</option>
+            </select>
+          </div>
+          <div class="form-group" id="proj-custom-category-group" style="display:none;">
+            <label for="proj-custom-category" data-i18n="createProject.customCat">Escribe la categoría</label>
+            <input type="text" id="proj-custom-category" placeholder="Ej: Ciberseguridad, Análisis de datos..." data-i18n-placeholder="createProject.customCatPh">
+          </div>
+          <div class="form-group">
+            <label for="proj-slots" data-i18n="createProject.slots">Cupos Disponibles</label>
+            <input type="number" id="proj-slots" required min="1" max="50" value="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="createProject.minRating">Estrellas Mínimas Requeridas</label>
+          <p class="form-hint" data-i18n="createProject.minRatingHint">¿Qué calificación mínima debe tener un colaborador para aplicar a este proyecto?</p>
+          <div class="star-input" id="proj-min-rating-input">
+            <span class="star-input-label" id="proj-min-rating-label">1 estrella o más</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="createProject.techs">Tecnologías Requeridas</label>
+          <p class="form-hint" data-i18n="createProject.techsHint">Selecciona las tecnologías que necesitas para este proyecto</p>
+          <div class="tech-buttons tech-buttons-form" id="proj-tech-buttons"></div>
+        </div>
+        <div class="form-group">
+          <label for="proj-description" data-i18n="createProject.desc">Descripción del Proyecto</label>
+          <textarea id="proj-description" rows="5" required
+            placeholder="Describe el proyecto, objetivos, metodología y lo que esperas de los colaboradores..." data-i18n-placeholder="createProject.descPh"></textarea>
+        </div>
+        <div class="form-group">
+          <label data-i18n="createProject.image">Imagen del Proyecto (opcional)</label>
+          <p class="form-hint" data-i18n="createProject.imageHint">Sube una imagen representativa del proyecto</p>
+          <input type="file" id="proj-image-upload" accept="image/*" onchange="handleProjectImage(event)">
+          <div class="project-image-preview" id="proj-image-preview" style="display:none;">
+            <img id="proj-image-preview-img" alt="Vista previa de la imagen del proyecto">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="clearProjectImage()" data-i18n="createProject.removeImg">Quitar imagen</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="proj-deadline" data-i18n="createProject.deadline">Fecha Límite (opcional)</label>
+            <input type="date" id="proj-deadline">
+          </div>
+          <div class="form-group">
+            <label for="proj-repo" data-i18n="createProject.repo">Repositorio (opcional)</label>
+            <input type="url" id="proj-repo" placeholder="https://github.com/..." data-i18n-placeholder="createProject.repoPh">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" data-i18n="createProject.publish">Publicar Proyecto</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Ver Detalle de Proyecto
+       ==================================================================== -->
+  <div class="modal-overlay" id="project-detail-modal" style="display:none;">
+    <div class="modal-card modal-large">
+      <button class="modal-close" onclick="closeModal('project-detail-modal')">&times;</button>
+      <div id="project-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Calificar Participantes
+       ==================================================================== -->
+  <div class="modal-overlay" id="rate-modal" style="display:none;">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('rate-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="rate.title">Calificar Participantes</h2>
+      <p class="auth-subtitle" data-i18n="rate.subtitle">Asigna estrellas a cada colaborador del proyecto</p>
+      <div id="rate-participants-list"></div>
+      <button class="btn btn-primary btn-full" onclick="saveRatings()" style="margin-top:1rem;" data-i18n="rate.saveBtn">Guardar Calificaciones</button>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Ver Perfil de Persona
+       ==================================================================== -->
+  <div class="modal-overlay" id="user-detail-modal" style="display:none;">
+    <div class="modal-card modal-large">
+      <button class="modal-close" onclick="closeModal('user-detail-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="userDetail.title">Perfil del Colaborador</h2>
+      <div id="user-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Invitar a Proyecto
+       ==================================================================== -->
+  <div class="modal-overlay" id="invite-modal" style="display:none;">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('invite-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="invite.title">Invitar a Proyecto</h2>
+      <p class="auth-subtitle"><span data-i18n="invite.subtitle">Invita a</span> <strong id="invite-person-name"></strong> <span data-i18n="invite.subtitle2">a uno de tus proyectos</span></p>
+      <form id="invite-form" onsubmit="sendInvite(event)">
+        <div class="form-group">
+          <label for="invite-project" data-i18n="invite.selectProject">Selecciona un proyecto abierto</label>
+          <select id="invite-project" required></select>
+        </div>
+        <div class="form-group">
+          <label for="invite-message" data-i18n="invite.message">Mensaje (opcional)</label>
+          <textarea id="invite-message" rows="3" placeholder="Escribe por qué te gustaría que se uniera..." data-i18n-placeholder="invite.messagePh"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" data-i18n="invite.submit">Enviar Invitación</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Seleccionar 5 proyectos principales
+       ==================================================================== -->
+  <div class="modal-overlay" id="featured-projects-modal" style="display:none;">
+    <div class="modal-card modal-small">
+      <button class="modal-close" onclick="closeModal('featured-projects-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="featured.title">Proyectos Principales</h2>
+      <p class="auth-subtitle" data-i18n="featured.subtitle">Elige hasta 5 proyectos para destacar en tu perfil</p>
+      <div class="form-group">
+        <input type="text" id="featured-search" placeholder="Filtrar proyectos..." oninput="filterFeaturedProjects()" data-i18n-placeholder="featured.searchPh">
+      </div>
+      <div class="featured-counter" id="featured-counter" data-i18n="featured.counter">Seleccionados: 0 / 5</div>
+      <div class="featured-list" id="featured-projects-list"></div>
+      <div class="featured-actions">
+        <button class="btn btn-ghost" onclick="closeModal('featured-projects-modal')" data-i18n="invite.cancel">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveFeaturedProjects()" data-i18n="invite.save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Seleccionar categorías (mini formulario de filtro)
+       ==================================================================== -->
+  <div class="modal-overlay" id="category-filter-modal" style="display:none;">
+    <div class="modal-card modal-small">
+      <button class="modal-close" onclick="closeModal('category-filter-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="catFilter.title">Categorías</h2>
+      <p class="auth-subtitle" data-i18n="catFilter.subtitle">Selecciona las categorías que quieres ver</p>
+      <div class="featured-counter" id="category-filter-counter" data-i18n="catFilter.counter">Seleccionadas: 0</div>
+      <div class="featured-list" id="category-filter-list"></div>
+      <div class="featured-actions">
+        <button class="btn btn-ghost" onclick="closeModal('category-filter-modal')" data-i18n="invite.cancel">Cancelar</button>
+        <button class="btn btn-primary" onclick="applyCategoryFilter()" data-i18n="invite.apply">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Seleccionar tecnologías (mini formulario de filtro)
+       ==================================================================== -->
+  <div class="modal-overlay" id="tech-filter-modal" style="display:none;">
+    <div class="modal-card modal-small">
+      <button class="modal-close" onclick="closeModal('tech-filter-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="techFilter.title">Tecnologías</h2>
+      <p class="auth-subtitle" data-i18n="techFilter.subtitle">Selecciona las tecnologías que quieres ver</p>
+      <div class="featured-counter" id="tech-filter-counter" data-i18n="techFilter.counter">Seleccionadas: 0</div>
+      <div class="featured-list" id="tech-filter-list"></div>
+      <div class="featured-actions">
+        <button class="btn btn-ghost" onclick="closeModal('tech-filter-modal')" data-i18n="invite.cancel">Cancelar</button>
+        <button class="btn btn-primary" onclick="applyTechFilter()" data-i18n="invite.apply">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: Seleccionar tecnologías de Personas (mini formulario de filtro)
+       ==================================================================== -->
+  <div class="modal-overlay" id="people-tech-filter-modal" style="display:none;">
+    <div class="modal-card modal-small">
+      <button class="modal-close" onclick="closeModal('people-tech-filter-modal')">&times;</button>
+      <h2 class="auth-title" data-i18n="techFilter.title">Tecnologías</h2>
+      <p class="auth-subtitle" data-i18n="peopleTechFilter.subtitle">Selecciona las tecnologías que quieres ver</p>
+      <div class="featured-counter" id="people-tech-filter-counter" data-i18n="peopleTechFilter.counter">Seleccionadas: 0</div>
+      <div class="featured-list" id="people-tech-filter-list"></div>
+      <div class="featured-actions">
+        <button class="btn btn-ghost" onclick="closeModal('people-tech-filter-modal')" data-i18n="invite.cancel">Cancelar</button>
+        <button class="btn btn-primary" onclick="applyPeopleTechFilter()" data-i18n="invite.apply">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       FOOTER
+       ==================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h2>ENTYCOLLAB</h2>
+        <p data-i18n="footer.desc">La plataforma donde los desarrolladores se encuentran, colaboran y construyen el futuro juntos.</p>
+      </div>
+      <div class="footer-contact">
+        <h3 data-i18n="footer.contact">Contacto</h3>
+        <p>info@entycollab.com</p>
+        <p>github.com/entycollab</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ENTYCOLLAB. <span data-i18n="footer.rights">Todos los derechos reservados.</span></p>
+    </div>
+  </footer>
+
+  <!-- ====================================================================
+       TOAST NOTIFICATIONS
+       ==================================================================== -->
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
