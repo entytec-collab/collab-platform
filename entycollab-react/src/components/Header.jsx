@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { getUserAvgRating, avatarColorClass, escapeHTML } from '../lib/helpers.js';
@@ -7,6 +7,7 @@ import { getUserAvgRating, avatarColorClass, escapeHTML } from '../lib/helpers.j
 export function LoggedHeader() {
   const { user, ratings, lang, theme, menuOpen, setMenuOpen, t, toggleLang, toggleTheme, logout } = useApp();
   const { showToast } = useToast();
+  const { pathname } = useLocation();
   const wrapRef = useRef(null);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export function LoggedHeader() {
         <nav className="header-nav" aria-label="Navegación principal">
           <ul className="nav-list">
             <li><NavLink to="/dashboard" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>{t('nav.home')}</NavLink></li>
-            <li><NavLink to="/proyectos" className={() => 'nav-link' + (locationHashIsProjects() ? ' active' : '')}>{t('nav.projects')}</NavLink></li>
+            <li><NavLink to="/proyectos" className={() => 'nav-link' + (isProjectsPath(pathname) ? ' active' : '')}>{t('nav.projects')}</NavLink></li>
             <li><NavLink to="/personas" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>{t('nav.people')}</NavLink></li>
           </ul>
         </nav>
@@ -59,9 +60,12 @@ export function LoggedHeader() {
     </header>
   );
 
-  function locationHashIsProjects() {
-    return window.location.pathname.startsWith('/proyectos') && !window.location.pathname.endsWith('/mis-proyectos') && !window.location.pathname.endsWith('/postulaciones');
-  }
+}
+
+function isProjectsPath(pathname) {
+  return pathname.startsWith('/proyectos')
+    && !pathname.endsWith('/mis-proyectos')
+    && !pathname.endsWith('/postulaciones');
 }
 
 function UserBubbleAvatar({ user }) {

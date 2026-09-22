@@ -5,7 +5,7 @@ import { useModals } from '../context/ModalManager.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import ProjectCard from '../components/ProjectCard.jsx';
 import { EmptyState } from '../components/common.jsx';
-import { availableCategoriesList } from '../modals/SelectFilterModal.jsx';
+import { availableCategoriesList } from '../lib/filters.js';
 import { getStatusLabel, escapeHTML } from '../lib/helpers.js';
 import { l10nValue } from '../lib/i18n.js';
 

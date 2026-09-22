@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useApp } from '../context/AppContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useModals } from '../context/ModalManager.jsx';
@@ -8,7 +8,7 @@ import { TECH_LIST, escapeHTML, fileToDataURL, getCategoryLabel, starLabel } fro
 export default function CreateProjectModal() {
   const { user, lang, t, createProject } = useApp();
   const { showToast } = useToast();
-  const { closeCreate, createOpen } = useModals();
+  const { closeCreate } = useModals();
   const fileRef = useRef(null);
 
   const [title, setTitle] = useState('');
@@ -21,16 +21,6 @@ export default function CreateProjectModal() {
   const [deadline, setDeadline] = useState('');
   const [repo, setRepo] = useState('');
   const [image, setImage] = useState(null);
-
-  // Reset del formulario cuando el modal se abre
-  useEffect(() => {
-    if (createOpen) {
-      setTitle(''); setCategory(''); setCustomCategory(''); setSlots(1);
-      setMinRating(1); setTechs([]); setDescription(''); setDeadline('');
-      setRepo(''); setImage(null);
-      if (fileRef.current) fileRef.current.value = '';
-    }
-  }, [createOpen]);
 
   if (!user) return null;
 
