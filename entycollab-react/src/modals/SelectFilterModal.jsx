@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useApp } from '../context/AppContext.jsx';
 import { useModals } from '../context/ModalManager.jsx';
 import { Modal, EmptyState } from '../components/common.jsx';
-import { escapeHTML, getCategoryLabel } from '../lib/helpers.js';
+import { escapeHTML } from '../lib/helpers.js';
+import { availableCategoriesList, availablePeopleTechList, availableTechList } from '../lib/filters.js';
 
 // kind: "category" | "tech" | "peopleTech"
 export default function SelectFilterModal({ kind }) {
@@ -83,33 +84,4 @@ export default function SelectFilterModal({ kind }) {
       : isPeople ? selectedPeopleTechFilters.slice()
         : selectedTechFilters.slice();
   }
-}
-
-// Categorías realmente usadas por los proyectos existentes
-export function availableCategoriesList(projects, lang) {
-  const used = new Set(projects.map(p => p.category));
-  const list = [];
-  const CAT = {
-    web: 'cat.web', mobile: 'cat.mobile', desktop: 'cat.desktop', ai: 'cat.ai',
-    game: 'cat.game', backend: 'cat.backend', devops: 'cat.devops'
-  };
-  Object.keys(CAT).forEach(key => {
-    if (used.has(key)) list.push({ value: key, label: getCategoryLabel(lang, key) });
-  });
-  [...used].filter(c => !CAT[c] && c !== 'other').forEach(c => list.push({ value: c, label: c }));
-  return list;
-}
-
-// Tecnologías realmente usadas por los proyectos existentes
-export function availableTechList(projects) {
-  const all = new Set();
-  projects.forEach(p => (p.tech || []).forEach(t => all.add(t)));
-  return [...all].sort();
-}
-
-// Habilidades de los colaboradores disponibles
-export function availablePeopleTechList(users) {
-  const all = new Set();
-  users.filter(u => u.available === true).forEach(u => (u.skills || []).forEach(s => all.add(s)));
-  return [...all].sort();
 }
