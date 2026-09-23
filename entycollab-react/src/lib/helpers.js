@@ -6,13 +6,15 @@
 import { t, l10nValue } from './i18n.js';
 
 export const CATEGORIES = {
-  web: 'cat.web',
-  mobile: 'cat.mobile',
-  desktop: 'cat.desktop',
-  ai: 'cat.ai',
   game: 'cat.game',
-  backend: 'cat.backend',
-  devops: 'cat.devops',
+  rpg: 'cat.rpg',
+  action: 'cat.action',
+  platformer: 'cat.platformer',
+  puzzle: 'cat.puzzle',
+  multiplayer: 'cat.multiplayer',
+  strategy: 'cat.strategy',
+  vr: 'cat.vr',
+  mobile: 'cat.mobile',
   other: 'cat.other'
 };
 
@@ -24,14 +26,16 @@ export const STATUSES = {
 };
 
 export const CATEGORY_META = {
-  web: { icon: '🌐', labelKey: 'cat.web', gradient: 'linear-gradient(135deg, #6366f1, #0ea5e9)' },
-  mobile: { icon: '📱', labelKey: 'cat.mobile', gradient: 'linear-gradient(135deg, #10b981, #14b8a6)' },
-  desktop: { icon: '🖥️', labelKey: 'cat.desktop', gradient: 'linear-gradient(135deg, #64748b, #475569)' },
-  ai: { icon: '🤖', labelKey: 'cat.ai', gradient: 'linear-gradient(135deg, #8b5cf6, #a855f7)' },
   game: { icon: '🎮', labelKey: 'cat.game', gradient: 'linear-gradient(135deg, #f43f5e, #ec4899)' },
-  backend: { icon: '⚙️', labelKey: 'cat.backend', gradient: 'linear-gradient(135deg, #f59e0b, #f97316)' },
-  devops: { icon: '☁️', labelKey: 'cat.devops', gradient: 'linear-gradient(135deg, #0ea5e9, #06b6d4)' },
-  other: { icon: '🗂️', labelKey: 'cat.other', gradient: 'linear-gradient(135deg, #22c55e, #84cc16)' }
+  rpg: { icon: '🗡️', labelKey: 'cat.rpg', gradient: 'linear-gradient(135deg, #8b5cf6, #6366f1)' },
+  action: { icon: '🎯', labelKey: 'cat.action', gradient: 'linear-gradient(135deg, #ef4444, #f97316)' },
+  platformer: { icon: '🏃', labelKey: 'cat.platformer', gradient: 'linear-gradient(135deg, #10b981, #06b6d4)' },
+  puzzle: { icon: '🧩', labelKey: 'cat.puzzle', gradient: 'linear-gradient(135deg, #a855f7, #ec4899)' },
+  multiplayer: { icon: '🌐', labelKey: 'cat.multiplayer', gradient: 'linear-gradient(135deg, #0ea5e9, #3b82f6)' },
+  strategy: { icon: '🏰', labelKey: 'cat.strategy', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+  vr: { icon: '🥽', labelKey: 'cat.vr', gradient: 'linear-gradient(135deg, #6366f1, #a855f7)' },
+  mobile: { icon: '📱', labelKey: 'cat.mobile', gradient: 'linear-gradient(135deg, #14b8a6, #10b981)' },
+  other: { icon: '🗂️', labelKey: 'cat.other', gradient: 'linear-gradient(135deg, #64748b, #475569)' }
 };
 
 export const GAME_DEV_TECH_LIST = [
@@ -43,11 +47,7 @@ export const GAME_DEV_TECH_LIST = [
   'PhysX', 'Havok', 'Photon', 'Mirror', 'Netcode'
 ];
 
-export const TECH_LIST = [
-  'Unity', 'Unreal Engine', 'Godot', 'Blender', 'C#', 'C++', 'Python', 'Rust',
-  'JavaScript', 'TypeScript', 'Java', 'Go', 'React', 'Node.js', 'PostgreSQL',
-  'Docker', 'AWS', 'TensorFlow', 'PyTorch', 'Git', 'Linux'
-];
+export const TECH_LIST = GAME_DEV_TECH_LIST;
 
 export function escapeHTML(str) {
   if (!str) return '';

@@ -17,10 +17,11 @@ export default function SelectFilterModal({ kind }) {
   } = useApp();
   const modals = useModals();
 
-  const [draft, setDraft] = useState(() => snapshot());
-
   const isCategory = kind === 'category';
   const isPeople = kind === 'peopleTech';
+
+  const [draft, setDraft] = useState(() => snapshot());
+
   const apply = isCategory ? setSelectedCategories : isPeople ? setSelectedPeopleTechFilters : setSelectedTechFilters;
   const onClose = isCategory ? modals.closeCategoryFilter : isPeople ? modals.closePeopleTechFilter : modals.closeTechFilter;
 

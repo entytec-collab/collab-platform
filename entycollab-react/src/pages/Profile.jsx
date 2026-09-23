@@ -177,12 +177,12 @@ export default function Profile() {
 }
 
 const TECH_LIST = [
-  'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'Go', 'Rust',
-  'HTML', 'CSS', 'React', 'Vue.js', 'Angular', 'Svelte', 'Next.js', 'Node.js',
-  'Express', 'Django', 'Flask', 'Spring Boot', 'Ruby on Rails', 'PHP', 'Laravel',
-  'SQL', 'PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'Firebase', 'GraphQL',
-  'Docker', 'Kubernetes', 'AWS', 'Azure', 'React Native', 'Flutter', 'Swift',
-  'Kotlin', 'TensorFlow', 'PyTorch', 'Git', 'Linux', 'WordPress'
+  'Unity', 'Unreal Engine', 'Godot', 'GameMaker', 'RPG Maker', 'CryEngine', 'Defold', 'Phaser', 'Bevy', 'Raylib',
+  'C#', 'C++', 'GDScript', 'Lua', 'Blueprints', 'Rust', 'Python',
+  'Blender', 'Maya', '3ds Max', 'ZBrush', 'Substance 3D', 'Aseprite', 'Photoshop', 'Spine 2D', 'Houdini', 'Pixel Art',
+  'Shader Graph', 'HLSL / GLSL', 'OpenGL', 'Vulkan', 'DirectX', 'Metal',
+  'FMOD', 'Wwise', 'Audacity', 'Reaper',
+  'PhysX', 'Havok', 'Photon', 'Mirror', 'Netcode'
 ];
 
 function avatarColor(u) {

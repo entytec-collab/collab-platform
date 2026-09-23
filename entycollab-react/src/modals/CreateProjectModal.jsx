@@ -158,6 +158,7 @@ export default function CreateProjectModal() {
 }
 
 const CATEGORY_KEYS = {
-  web: 'web', mobile: 'mobile', desktop: 'desktop', ai: 'ai',
-  game: 'game', backend: 'backend', devops: 'devops', other: 'other'
+  game: 'game', rpg: 'rpg', action: 'action', platformer: 'platformer',
+  puzzle: 'puzzle', multiplayer: 'multiplayer', strategy: 'strategy',
+  vr: 'vr', mobile: 'mobile', other: 'other'
 };

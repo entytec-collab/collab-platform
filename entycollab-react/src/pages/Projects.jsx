@@ -49,8 +49,8 @@ function NewProjects() {
     const q = search.toLowerCase();
     if (q) {
       out = out.filter(p =>
-        l10nValue(p.title).toLowerCase().includes(q) ||
-        l10nValue(p.description).toLowerCase().includes(q) ||
+        l10nValue(lang, p.title).toLowerCase().includes(q) ||
+        l10nValue(lang, p.description).toLowerCase().includes(q) ||
         p.tech.some(tt => tt.toLowerCase().includes(q))
       );
     }
