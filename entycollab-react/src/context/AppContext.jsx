@@ -6,7 +6,7 @@ import {
   generateId, getTheme, setTheme as storeSetTheme, getLang, setLang as storeSetLang
 } from '../lib/store.js';
 import { t as i18nT, l10nValue } from '../lib/i18n.js';
-import { getUserAvgRating } from '../lib/helpers.js';
+import { getUserAvgRating, userCategories } from '../lib/helpers.js';
 
 const AppContext = createContext(null);
 
@@ -22,6 +22,7 @@ export function AppProvider({ children }) {
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedTechFilters, setSelectedTechFilters] = useState([]);
+  const [selectedPeopleCategories, setSelectedPeopleCategories] = useState([]);
   const [selectedPeopleTechFilters, setSelectedPeopleTechFilters] = useState([]);
 
   const user = users.find(u => u.id === userId) || null;
@@ -84,6 +85,7 @@ export function AppProvider({ children }) {
       email: data.email,
       password: data.password,
       skills: data.skills,
+      categories: userCategories({ skills: data.skills }),
       bio: data.bio,
       createdAt: new Date().toISOString()
     };
@@ -103,12 +105,13 @@ export function AppProvider({ children }) {
   // ========================================================================
   // PROFILE
   // ========================================================================
-  const saveProfile = useCallback(({ bio, skills }) => {
+  const saveProfile = useCallback(({ bio, skills, categories }) => {
     const current = getUsers();
     const idx = current.findIndex(u => u.id === userId);
     if (idx >= 0) {
       current[idx].bio = bio;
       current[idx].skills = skills.slice();
+      if (categories) current[idx].categories = categories.slice();
       saveUsers(current);
       setUsers(current);
       refresh();
@@ -309,6 +312,7 @@ export function AppProvider({ children }) {
     lang, theme, menuOpen, setMenuOpen,
     selectedCategories, setSelectedCategories,
     selectedTechFilters, setSelectedTechFilters,
+    selectedPeopleCategories, setSelectedPeopleCategories,
     selectedPeopleTechFilters, setSelectedPeopleTechFilters,
     t, l10n, toggleLang, toggleTheme,
     login, register, logout,

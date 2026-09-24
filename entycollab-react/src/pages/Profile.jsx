@@ -3,16 +3,17 @@ import { useApp } from '../context/AppContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import UserHistory from '../components/UserHistory.jsx';
 import { Avatar, SkillTags } from '../components/common.jsx';
-import { getUserAvgRating, getUserRatingCount, escapeHTML, fileToDataURL } from '../lib/helpers.js';
+import { getUserAvgRating, getUserRatingCount, escapeHTML, fileToDataURL, techsForCategory, getCategoryLabel, userCategories } from '../lib/helpers.js';
 
 export default function Profile() {
-  const { user, users, projects, ratings, t, l10n, saveProfile, setAvatar, toggleAvailability } = useApp();
+  const { user, users, projects, ratings, lang, t, l10n, saveProfile, setAvatar, toggleAvailability } = useApp();
   const { showToast } = useToast();
   const avatarInputRef = useRef(null);
 
   const [editing, setEditing] = useState(false);
   const [draftBio, setDraftBio] = useState('');
   const [draftSkills, setDraftSkills] = useState([]);
+  const [draftCategories, setDraftCategories] = useState([]);
 
   if (!user) return null;
 
@@ -22,15 +23,20 @@ export default function Profile() {
   const startEdit = () => {
     setDraftBio(l10n(user.bio) || '');
     setDraftSkills((user.skills || []).slice());
+    setDraftCategories(userCategories(user).slice());
     setEditing(true);
   };
 
   const save = () => {
+    if (draftCategories.length === 0) {
+      showToast(t('profile.selectCat'), 'error');
+      return;
+    }
     if (draftSkills.length === 0) {
       showToast(t('toast.applyTech'), 'error');
       return;
     }
-    saveProfile({ bio: draftBio.trim(), skills: draftSkills });
+    saveProfile({ bio: draftBio.trim(), skills: draftSkills, categories: draftCategories });
     setEditing(false);
     showToast(t('profile.saved'), 'success');
   };
@@ -57,6 +63,21 @@ export default function Profile() {
   const toggleSkill = (skill) => {
     setDraftSkills(prev => prev.includes(skill) ? prev.filter(x => x !== skill) : [...prev, skill]);
   };
+
+  const toggleCategory = (cat) => {
+    setDraftCategories(prev => prev.includes(cat) ? prev.filter(x => x !== cat) : [...prev, cat]);
+  };
+
+  const availableTechs = [];
+  const seenTechs = new Set();
+  draftCategories.forEach(cat => {
+    techsForCategory(cat).forEach(tech => {
+      if (!seenTechs.has(tech)) {
+        seenTechs.add(tech);
+        availableTechs.push(tech);
+      }
+    });
+  });
 
   const receivedRatings = ratings.filter(r => r.ratedUserId === user.id);
 
@@ -124,20 +145,40 @@ export default function Profile() {
                 <textarea id="profile-bio-input" rows="3" value={draftBio} onChange={e => setDraftBio(e.target.value)} placeholder={t('profile.bioPh')}></textarea>
               </div>
               <div className="form-group">
-                <label>{t('profile.skillsLabel')}</label>
-                <p className="form-hint">{t('profile.skillsHint')}</p>
+                <label>{t('profile.categoriesLabel')}</label>
+                <p className="form-hint">{t('profile.categoriesHint')}</p>
                 <div className="tech-buttons tech-buttons-form">
-                  {TECH_LIST.map(s => (
+                  {['web', 'mobile', 'game'].map(cat => (
                     <button
-                      key={s}
+                      key={cat}
                       type="button"
-                      className={'tech-chip' + (draftSkills.includes(s) ? ' active' : '')}
-                      onClick={() => toggleSkill(s)}
+                      className={'tech-chip' + (draftCategories.includes(cat) ? ' active' : '')}
+                      onClick={() => toggleCategory(cat)}
                     >
-                      {escapeHTML(s)}
+                      {escapeHTML(getCategoryLabel(lang, cat))}
                     </button>
                   ))}
                 </div>
+              </div>
+              <div className="form-group">
+                <label>{t('profile.skillsLabel')}</label>
+                <p className="form-hint">{t('profile.skillsHint')}</p>
+                {draftCategories.length === 0 ? (
+                  <p className="form-hint">{t('profile.selectCat')}</p>
+                ) : (
+                  <div className="tech-buttons tech-buttons-form">
+                    {availableTechs.map(s => (
+                      <button
+                        key={s}
+                        type="button"
+                        className={'tech-chip' + (draftSkills.includes(s) ? ' active' : '')}
+                        onClick={() => toggleSkill(s)}
+                      >
+                        {escapeHTML(s)}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="edit-skills-actions">
                 <button className="btn btn-primary btn-sm" onClick={save}>{t('profile.saveBtn')}</button>
@@ -175,15 +216,6 @@ export default function Profile() {
     </div>
   );
 }
-
-const TECH_LIST = [
-  'Unity', 'Unreal Engine', 'Godot', 'GameMaker', 'RPG Maker', 'CryEngine', 'Defold', 'Phaser', 'Bevy', 'Raylib',
-  'C#', 'C++', 'GDScript', 'Lua', 'Blueprints', 'Rust', 'Python',
-  'Blender', 'Maya', '3ds Max', 'ZBrush', 'Substance 3D', 'Aseprite', 'Photoshop', 'Spine 2D', 'Houdini', 'Pixel Art',
-  'Shader Graph', 'HLSL / GLSL', 'OpenGL', 'Vulkan', 'DirectX', 'Metal',
-  'FMOD', 'Wwise', 'Audacity', 'Reaper',
-  'PhysX', 'Havok', 'Photon', 'Mirror', 'Netcode'
-];
 
 function avatarColor(u) {
   let seed = 0;

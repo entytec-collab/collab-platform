@@ -1,15 +1,16 @@
 import { useApp } from '../context/AppContext.jsx';
 import { useModals } from '../context/ModalManager.jsx';
 import { Avatar, Stars, SkillTags } from './common.jsx';
-import { getUserAvgRating, escapeHTML } from '../lib/helpers.js';
+import { getUserAvgRating, escapeHTML, userCategories, getCategoryLabel } from '../lib/helpers.js';
 
 export default function PersonCard({ person, me }) {
-  const { ratings, t, l10n } = useApp();
+  const { ratings, lang, t, l10n } = useApp();
   const { openUserDetail, openInvite } = useModals();
 
   const rating = getUserAvgRating(person.id, ratings);
   const isSelf = person.id === me.id;
   const bio = l10n(person.bio);
+  const categories = userCategories(person);
 
   return (
     <article className="person-card">
@@ -29,6 +30,11 @@ export default function PersonCard({ person, me }) {
         </div>
       </div>
       <p className="person-bio">{bio ? escapeHTML(bio) : t('person.noBio')}</p>
+      {categories.length > 0 && (
+        <div className="person-categories">
+          {categories.map(c => <span key={c} className="person-cat-chip">{escapeHTML(getCategoryLabel(lang, c))}</span>)}
+        </div>
+      )}
       <div className="person-skills"><SkillTags skills={person.skills} /></div>
       <div className="person-actions">
         <button className="btn btn-ghost btn-sm" onClick={() => openUserDetail(person.id)}>

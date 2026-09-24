@@ -3,6 +3,8 @@
 // Capa de datos portada de app.js: mismas claves, seeds y migraciones.
 // ==========================================================================
 
+import { userCategories } from './helpers.js';
+
 export const STORAGE_KEYS = {
   users: 'devcollab_users',
   projects: 'devcollab_projects',
@@ -87,6 +89,14 @@ export function migrateLegacyData() {
       out.available = false;
       changed = true;
     }
+    // Categorías nuevas: inferirlas desde las habilidades del usuario
+    if (!Array.isArray(out.categories) || out.categories.length === 0) {
+      const derived = userCategories(out);
+      if (derived.length > 0) {
+        out.categories = derived;
+        changed = true;
+      }
+    }
     return out;
   });
   if (changed) saveUsers(users);
@@ -105,6 +115,11 @@ export function migrateLegacyData() {
     }
     if (!Array.isArray(out.tech)) {
       out.tech = [];
+      changed = true;
+    }
+    // Las categorías "backend"/"devops" ya no existen: se agrupan en "web"
+    if (out.category === 'backend' || out.category === 'devops') {
+      out.category = 'web';
       changed = true;
     }
     return out;
@@ -237,6 +252,7 @@ export function seedDemoData() {
       email: 'maria@demo.com',
       password: '123456',
       skills: ['JavaScript', 'React', 'Node.js', 'MongoDB'],
+      categories: ['web'],
       bio: {
         es: 'Desarrolladora full stack con 3 años de experiencia. Apasionada por crear aplicaciones web modernas y escalables.',
         en: 'Full stack developer with 3 years of experience. Passionate about building modern and scalable web applications.'
@@ -250,6 +266,7 @@ export function seedDemoData() {
       email: 'carlos@demo.com',
       password: '123456',
       skills: ['Python', 'Django', 'PostgreSQL', 'Docker'],
+      categories: ['web'],
       bio: {
         es: 'Ingeniero de software enfocado en backend y arquitectura de microservicios.',
         en: 'Software engineer focused on backend and microservices architecture.'
@@ -264,6 +281,7 @@ export function seedDemoData() {
       email: 'ana@demo.com',
       password: '123456',
       skills: ['TypeScript', 'Vue.js', 'Tailwind CSS', 'Firebase'],
+      categories: ['web'],
       bio: {
         es: 'Frontend developer y diseñadora UI/UX. Me encanta crear interfaces elegantes y funcionales.',
         en: 'Frontend developer and UI/UX designer. I love creating elegant and functional interfaces.'
@@ -301,7 +319,7 @@ export function seedDemoData() {
         es: 'API REST para Sistema de E-learning',
         en: 'REST API for E-learning System'
       },
-      category: 'backend',
+      category: 'web',
       slots: 2,
       tech: ['Python', 'Django REST Framework', 'PostgreSQL', 'Redis'],
       description: {
@@ -348,6 +366,7 @@ export function seedDemoExtraData() {
     {
       id: 'demo4', name: 'Luis Ramírez', username: 'luisram', email: 'luis@demo.com', password: '123456',
       skills: ['JavaScript', 'React', 'Next.js', 'Node.js'],
+      categories: ['web'],
       bio: {
         es: 'Desarrollador frontend especializado en React y Next.js. Me gusta el diseño de interfaces y el performance web.',
         en: 'Frontend developer specialized in React and Next.js. I enjoy interface design and web performance.'
@@ -357,6 +376,7 @@ export function seedDemoExtraData() {
     {
       id: 'demo5', name: 'Sofía Herrera', username: 'sofiaher', email: 'sofia@demo.com', password: '123456',
       skills: ['Python', 'Django', 'PostgreSQL', 'AWS'],
+      categories: ['web'],
       bio: {
         es: 'Backend developer y entusiasta del data. Construyo APIs escalables en la nube.',
         en: 'Backend developer and data enthusiast. I build scalable APIs in the cloud.'
@@ -366,6 +386,7 @@ export function seedDemoExtraData() {
     {
       id: 'demo6', name: 'Diego Torres', username: 'diegotor', email: 'diego@demo.com', password: '123456',
       skills: ['TypeScript', 'Angular', 'CSS', 'MySQL'],
+      categories: ['web'],
       bio: {
         es: 'Full stack web con amor por el frontend. Experiencia con aplicaciones empresariales.',
         en: 'Web full stack with a love for frontend. Experience with enterprise applications.'
@@ -375,6 +396,7 @@ export function seedDemoExtraData() {
     {
       id: 'demo7', name: 'Valentina Rojas', username: 'valerojas', email: 'vale@demo.com', password: '123456',
       skills: ['Go', 'Docker', 'Kubernetes', 'AWS'],
+      categories: ['web'],
       bio: {
         es: 'Ingeniera de plataformas. Microservicios, contenedores y CI/CD son mi día a día.',
         en: 'Platform engineer. Microservices, containers and CI/CD are my daily routine.'
@@ -384,11 +406,32 @@ export function seedDemoExtraData() {
     {
       id: 'demo8', name: 'Mateo Silva', username: 'mateosil', email: 'mateo@demo.com', password: '123456',
       skills: ['Flutter', 'Dart', 'Firebase'],
+      categories: ['mobile'],
       bio: {
         es: 'Mobile developer en Flutter. Apps nativas multiplataforma con UI cuidada.',
         en: 'Mobile developer in Flutter. Cross-platform native apps with careful UI.'
       },
       available: true, createdAt: '2026-06-15T10:00:00Z'
+    },
+    {
+      id: 'demo9', name: 'Andrés Castillo', username: 'andrescas', email: 'andres@demo.com', password: '123456',
+      skills: ['Unity', 'C#', 'Blender', 'Aseprite'],
+      categories: ['game'],
+      bio: {
+        es: 'Desarrollador de videojuegos en Unity. Me apasiona el game feel, la programación de gameplay y el pixel art.',
+        en: 'Unity game developer. Passionate about game feel, gameplay programming and pixel art.'
+      },
+      available: true, createdAt: '2026-06-25T10:00:00Z'
+    },
+    {
+      id: 'demo10', name: 'Camila Ríos', username: 'camilarios', email: 'camila@demo.com', password: '123456',
+      skills: ['Godot', 'GDScript', 'Aseprite', 'Pixel Art'],
+      categories: ['game'],
+      bio: {
+        es: 'Game designer y desarrolladora en Godot. Creo mecánicas, niveles y arte pixel art para juegos 2D.',
+        en: 'Game designer and developer in Godot. I create mechanics, levels and pixel art for 2D games.'
+      },
+      available: true, createdAt: '2026-07-02T10:00:00Z'
     }
   ];
 
@@ -406,7 +449,7 @@ export function seedDemoExtraData() {
     {
       id: 'proj5', ownerId: 'demo5',
       title: { es: 'Sistema de Reservas para Restaurantes', en: 'Restaurant Reservation System' },
-      category: 'backend', slots: 2, tech: ['Python', 'Django', 'PostgreSQL'],
+      category: 'web', slots: 2, tech: ['Python', 'Django', 'PostgreSQL'],
       description: {
         es: 'API para gestionar reservas de mesas en tiempo real, con notificaciones por email y reportes de ocupación.',
         en: 'API to manage table reservations in real time, with email notifications and occupancy reports.'
@@ -426,12 +469,32 @@ export function seedDemoExtraData() {
     {
       id: 'proj7', ownerId: 'demo7',
       title: { es: 'Gateway de Microservicios', en: 'Microservices Gateway' },
-      category: 'devops', slots: 2, tech: ['Go', 'Docker', 'Kubernetes'],
+      category: 'web', slots: 2, tech: ['Go', 'Docker', 'Kubernetes'],
       description: {
         es: 'API gateway para orquestar microservicios con autenticación centralizada, rate limiting y observabilidad.',
         en: 'API gateway to orchestrate microservices with centralized authentication, rate limiting and observability.'
       },
       minRating: 3, deadline: '2027-01-15', repo: 'https://github.com/demo/api-gateway', status: 'open', createdAt: '2026-09-10T10:00:00Z'
+    },
+    {
+      id: 'proj8', ownerId: 'demo9',
+      title: { es: 'RPG de Fantasía 2D', en: '2D Fantasy RPG' },
+      category: 'game', slots: 3, tech: ['Unity', 'C#', 'Aseprite'],
+      description: {
+        es: 'Juego RPG 2D con combate por turnos, mapa de mundo y diálogos. Busco programadores de gameplay y artistas de pixel art para acelerar el desarrollo.',
+        en: '2D RPG with turn-based combat, world map and dialogues. Looking for gameplay programmers and pixel art artists to speed up development.'
+      },
+      minRating: 1, deadline: '2027-03-01', repo: 'https://github.com/demo/fantasy-rpg', status: 'open', createdAt: '2026-09-12T10:00:00Z'
+    },
+    {
+      id: 'proj9', ownerId: 'demo10',
+      title: { es: 'Plataformas Pixel Art', en: 'Pixel Art Platformer' },
+      category: 'game', slots: 4, tech: ['Godot', 'GDScript', 'Aseprite'],
+      description: {
+        es: 'Plataformas 2D con estética pixel art, niveles desafiantes y speedrun. Necesito diseñadores de niveles y artistas para los sprites y animaciones.',
+        en: '2D platformer with pixel art aesthetics, challenging levels and speedrun mode. I need level designers and artists for sprites and animations.'
+      },
+      minRating: 2, deadline: '2027-04-15', repo: null, status: 'open', createdAt: '2026-09-15T10:00:00Z'
     }
   ];
 
@@ -443,7 +506,9 @@ export function seedDemoExtraData() {
     { id: 'app-ref-4', projectId: 'proj1', userId: 'demo6', status: 'accepted', appliedAt: '2026-08-21T10:00:00Z' },
     { id: 'app-ref-5', projectId: 'proj5', userId: 'demo7', status: 'accepted', appliedAt: '2026-09-06T10:00:00Z' },
     { id: 'app-ref-6', projectId: 'proj4', userId: 'demo8', status: 'accepted', appliedAt: '2026-09-03T10:00:00Z' },
-    { id: 'app-ref-7', projectId: 'proj3', userId: 'demo8', status: 'accepted', appliedAt: '2026-08-27T10:00:00Z' }
+    { id: 'app-ref-7', projectId: 'proj3', userId: 'demo8', status: 'accepted', appliedAt: '2026-08-27T10:00:00Z' },
+    { id: 'app-ref-8', projectId: 'proj8', userId: 'demo10', status: 'accepted', appliedAt: '2026-09-16T10:00:00Z' },
+    { id: 'app-ref-9', projectId: 'proj9', userId: 'demo9', status: 'accepted', appliedAt: '2026-09-18T10:00:00Z' }
   ];
 
   const extraRatings = [
@@ -454,7 +519,9 @@ export function seedDemoExtraData() {
     { id: 'rating-10', projectId: 'proj1', ratedUserId: 'demo5', ratedBy: 'demo1', stars: 4, createdAt: '2026-09-01T10:00:00Z' },
     { id: 'rating-11', projectId: 'proj1', ratedUserId: 'demo6', ratedBy: 'demo1', stars: 4, createdAt: '2026-09-01T10:00:00Z' },
     { id: 'rating-12', projectId: 'proj5', ratedUserId: 'demo7', ratedBy: 'demo5', stars: 5, createdAt: '2026-09-11T10:00:00Z' },
-    { id: 'rating-13', projectId: 'proj4', ratedUserId: 'demo8', ratedBy: 'demo4', stars: 5, createdAt: '2026-09-05T10:00:00Z' }
+    { id: 'rating-13', projectId: 'proj4', ratedUserId: 'demo8', ratedBy: 'demo4', stars: 5, createdAt: '2026-09-05T10:00:00Z' },
+    { id: 'rating-14', projectId: 'proj8', ratedUserId: 'demo9', ratedBy: 'demo10', stars: 5, createdAt: '2026-09-17T10:00:00Z' },
+    { id: 'rating-15', projectId: 'proj9', ratedUserId: 'demo10', ratedBy: 'demo9', stars: 4, createdAt: '2026-09-19T10:00:00Z' }
   ];
 
   const users = getUsers();

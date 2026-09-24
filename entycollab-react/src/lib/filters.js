@@ -1,19 +1,14 @@
-import { getCategoryLabel } from './helpers.js';
+import { getCategoryLabel, techsForCategory } from './helpers.js';
 
 export function availableCategoriesList(projects, lang) {
   const used = new Set(projects.map(project => project.category));
   const categoryKeys = {
     web: 'cat.web',
     mobile: 'cat.mobile',
-    desktop: 'cat.desktop',
-    ai: 'cat.ai',
-    game: 'cat.game',
-    backend: 'cat.backend',
-    devops: 'cat.devops'
+    game: 'cat.game'
   };
 
   const categories = Object.keys(categoryKeys)
-    .filter(category => used.has(category))
     .map(category => ({
       value: category,
       label: getCategoryLabel(lang, category)
@@ -26,18 +21,30 @@ export function availableCategoriesList(projects, lang) {
   return [...categories, ...customCategories];
 }
 
-export function availableTechList(projects) {
-  const technologies = new Set();
-  projects.forEach(project => {
-    (project.tech || []).forEach(technology => technologies.add(technology));
+export function availableTechList(projects, categories) {
+  if (!categories || categories.length === 0) return [];
+  const techs = [];
+  const seen = new Set();
+  categories.forEach(category => {
+    techsForCategory(category).forEach(technology => {
+      if (!seen.has(technology)) {
+        seen.add(technology);
+        techs.push(technology);
+      }
+    });
   });
-  return [...technologies].sort();
+  return techs;
 }
 
-export function availablePeopleTechList(users) {
-  const technologies = new Set();
-  users
-    .filter(user => user.available === true)
-    .forEach(user => (user.skills || []).forEach(skill => technologies.add(skill)));
-  return [...technologies].sort();
+// Categorías disponibles para filtrar personas (las 3 categorías fijas)
+export function availablePeopleCategoriesList(lang) {
+  return ['web', 'mobile', 'game']
+    .map(category => ({
+      value: category,
+      label: getCategoryLabel(lang, category)
+    }));
+}
+
+export function availablePeopleTechList(users, categories) {
+  return availableTechList(users, categories);
 }

@@ -2,10 +2,10 @@ import { useApp } from '../context/AppContext.jsx';
 import { useModals } from '../context/ModalManager.jsx';
 import { Modal, Avatar, Stars, SkillTags } from '../components/common.jsx';
 import UserHistory from '../components/UserHistory.jsx';
-import { getUserAvgRating, escapeHTML } from '../lib/helpers.js';
+import { getUserAvgRating, escapeHTML, userCategories, getCategoryLabel } from '../lib/helpers.js';
 
 export default function UserDetailModal() {
-  const { users, ratings, t, l10n } = useApp();
+  const { users, ratings, lang, t, l10n } = useApp();
   const { userDetailId, closeUserDetail, openInvite } = useModals();
   const { user: me } = useApp();
 
@@ -15,6 +15,7 @@ export default function UserDetailModal() {
   const rating = getUserAvgRating(u.id, ratings);
   const bio = l10n(u.bio);
   const isSelf = me && me.id === u.id;
+  const categories = userCategories(u);
 
   return (
     <Modal open onClose={closeUserDetail} size="modal-large" title={t('userDetail.title')}>
@@ -27,6 +28,11 @@ export default function UserDetailModal() {
             {rating > 0 ? <Stars rating={rating} /> : t('person.noRatings')}
           </div>
           <p className="profile-bio">{bio ? escapeHTML(bio) : t('person.noBio')}</p>
+          {categories.length > 0 && (
+            <div className="person-categories">
+              {categories.map(c => <span key={c} className="person-cat-chip">{escapeHTML(getCategoryLabel(lang, c))}</span>)}
+            </div>
+          )}
           <div className="profile-skills">{<SkillTags skills={u.skills} limit={999} />}</div>
         </div>
         <div className="profile-history">

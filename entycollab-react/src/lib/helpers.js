@@ -6,6 +6,7 @@
 import { t, l10nValue } from './i18n.js';
 
 export const CATEGORIES = {
+  web: 'cat.web',
   game: 'cat.game',
   rpg: 'cat.rpg',
   action: 'cat.action',
@@ -26,6 +27,7 @@ export const STATUSES = {
 };
 
 export const CATEGORY_META = {
+  web: { icon: '💻', labelKey: 'cat.web', gradient: 'linear-gradient(135deg, #3b82f6, #06b6d4)' },
   game: { icon: '🎮', labelKey: 'cat.game', gradient: 'linear-gradient(135deg, #f43f5e, #ec4899)' },
   rpg: { icon: '🗡️', labelKey: 'cat.rpg', gradient: 'linear-gradient(135deg, #8b5cf6, #6366f1)' },
   action: { icon: '🎯', labelKey: 'cat.action', gradient: 'linear-gradient(135deg, #ef4444, #f97316)' },
@@ -38,6 +40,17 @@ export const CATEGORY_META = {
   other: { icon: '🗂️', labelKey: 'cat.other', gradient: 'linear-gradient(135deg, #64748b, #475569)' }
 };
 
+export const WEB_DEV_TECH_LIST = [
+  'HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Next.js', 'Vue', 'Angular', 'Svelte',
+  'Tailwind CSS', 'Bootstrap', 'Node.js', 'Express', 'Django', 'Flask', 'Ruby on Rails', 'PHP', 'Laravel',
+  'GraphQL', 'PostgreSQL', 'MySQL', 'MongoDB', 'SQLite', 'Redis', 'Firebase', 'AWS', 'Docker'
+];
+
+export const MOBILE_DEV_TECH_LIST = [
+  'React Native', 'Flutter', 'Dart', 'Kotlin', 'Swift', 'SwiftUI', 'Objective-C', 'Java',
+  'Android Studio', 'Xcode', 'Jetpack Compose', 'Expo', 'Ionic', 'Firebase', 'SQLite', 'TensorFlow Lite'
+];
+
 export const GAME_DEV_TECH_LIST = [
   'Unity', 'Unreal Engine', 'Godot', 'GameMaker', 'RPG Maker', 'CryEngine', 'Defold', 'Phaser', 'Bevy', 'Raylib',
   'C#', 'C++', 'GDScript', 'Lua', 'Blueprints', 'Rust', 'Python',
@@ -47,7 +60,33 @@ export const GAME_DEV_TECH_LIST = [
   'PhysX', 'Havok', 'Photon', 'Mirror', 'Netcode'
 ];
 
-export const TECH_LIST = GAME_DEV_TECH_LIST;
+// Tecnologías relacionadas a cada categoría de proyecto
+export const CATEGORY_TECHS = {
+  web: WEB_DEV_TECH_LIST,
+  mobile: MOBILE_DEV_TECH_LIST,
+  game: GAME_DEV_TECH_LIST
+};
+
+const ALL_TECHS = Array.from(new Set(Object.values(CATEGORY_TECHS).flat()));
+
+export const TECH_LIST = ALL_TECHS;
+
+// Devuelve las tecnologías de una categoría; para categorías
+// personalizadas/desconocidas regresa la unión de todas.
+export function techsForCategory(category) {
+  return CATEGORY_TECHS[category] || ALL_TECHS;
+}
+
+// Devuelve las categorías de un usuario; si no las tiene guardadas,
+// las infiere a partir de sus habilidades.
+export function userCategories(user) {
+  if (Array.isArray(user.categories) && user.categories.length > 0) return user.categories;
+  const cats = [];
+  Object.keys(CATEGORY_TECHS).forEach(cat => {
+    if ((user.skills || []).some(s => CATEGORY_TECHS[cat].includes(s))) cats.push(cat);
+  });
+  return cats;
+}
 
 export function escapeHTML(str) {
   if (!str) return '';

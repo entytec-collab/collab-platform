@@ -25,7 +25,7 @@ export function LoggedHeader() {
       <div className="header-container header-compact">
         <div className="header-brand">
           <div className="header-brand-logo">
-            <img src="/img/entycollab.jpg" alt="Logo ENTYCOLLAB" className="site-logo-small" />
+            <img src="/img/logo-pg.png" alt="Logo ENTYCOLLAB" className="site-logo-small" />
           </div>
         </div>
         <nav className="header-nav" aria-label="Navegación principal">
@@ -82,7 +82,7 @@ export function PublicHeader() {
     <header className="site-header">
       <div className="header-container">
         <div className="logo-container">
-          <img src="/img/entycollab.jpg" alt="Logo ENTYCOLLAB" className="site-logo" />
+          <img src="/img/logo-pg.png" alt="Logo ENTYCOLLAB" className="site-logo" />
         </div>
         <span className="badge-tag">Open Source Collaboration</span>
         <h1>ENTYCOLLAB</h1>

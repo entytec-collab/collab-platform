@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useModals } from '../context/ModalManager.jsx';
 import { Modal, StarInput } from '../components/common.jsx';
-import { TECH_LIST, escapeHTML, fileToDataURL, getCategoryLabel, starLabel } from '../lib/helpers.js';
+import { escapeHTML, fileToDataURL, getCategoryLabel, starLabel, techsForCategory } from '../lib/helpers.js';
 
 export default function CreateProjectModal() {
   const { user, lang, t, createProject } = useApp();
@@ -74,6 +74,8 @@ export default function CreateProjectModal() {
     ? t('minRating.oneOrMore')
     : t('minRating.starsOrMore', { label: starLabel(lang, minRating) });
 
+  const availableTechs = category ? techsForCategory(category) : [];
+
   return (
     <Modal open title={t('createProject.title')} onClose={closeCreate}>
       <form onSubmit={submit}>
@@ -84,7 +86,7 @@ export default function CreateProjectModal() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="proj-category">{t('createProject.category')}</label>
-            <select id="proj-category" required value={category} onChange={e => setCategory(e.target.value)}>
+            <select id="proj-category" required value={category} onChange={e => { setCategory(e.target.value); setTechs([]); }}>
               <option value="">{t('createProject.select')}</option>
               {Object.keys(CATEGORY_KEYS).map(key => (
                 <option key={key} value={CATEGORY_KEYS[key]}>{getCategoryLabel(lang, CATEGORY_KEYS[key])}</option>
@@ -113,18 +115,22 @@ export default function CreateProjectModal() {
         <div className="form-group">
           <label>{t('createProject.techs')}</label>
           <p className="form-hint">{t('createProject.techsHint')}</p>
-          <div className="tech-buttons tech-buttons-form">
-            {TECH_LIST.map(tech => (
-              <button
-                key={tech}
-                type="button"
-                className={`tech-chip${techs.includes(tech) ? ' active' : ''}`}
-                onClick={() => toggleTech(tech)}
-              >
-                {escapeHTML(tech)}
-              </button>
-            ))}
-          </div>
+          {!category ? (
+            <p className="form-hint">{t('createProject.techsRequireCat')}</p>
+          ) : (
+            <div className="tech-buttons tech-buttons-form">
+              {availableTechs.map(tech => (
+                <button
+                  key={tech}
+                  type="button"
+                  className={`tech-chip${techs.includes(tech) ? ' active' : ''}`}
+                  onClick={() => toggleTech(tech)}
+                >
+                  {escapeHTML(tech)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="form-group">
           <label>{t('createProject.desc')}</label>
@@ -158,7 +164,5 @@ export default function CreateProjectModal() {
 }
 
 const CATEGORY_KEYS = {
-  game: 'game', rpg: 'rpg', action: 'action', platformer: 'platformer',
-  puzzle: 'puzzle', multiplayer: 'multiplayer', strategy: 'strategy',
-  vr: 'vr', mobile: 'mobile', other: 'other'
+  web: 'web', mobile: 'mobile', game: 'game', other: 'other'
 };

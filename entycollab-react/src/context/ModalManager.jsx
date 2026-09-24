@@ -18,6 +18,7 @@ export function ModalProvider({ children }) {
   const [featuredOpen, setFeaturedOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [techOpen, setTechOpen] = useState(false);
+  const [peopleCatOpen, setPeopleCatOpen] = useState(false);
   const [peopleTechOpen, setPeopleTechOpen] = useState(false);
 
   const openCreate = useCallback(() => setCreateOpen(true), []);
@@ -36,6 +37,8 @@ export function ModalProvider({ children }) {
   const closeCategoryFilter = useCallback(() => setCatOpen(false), []);
   const openTechFilter = useCallback(() => setTechOpen(true), []);
   const closeTechFilter = useCallback(() => setTechOpen(false), []);
+  const openPeopleCategoryFilter = useCallback(() => setPeopleCatOpen(true), []);
+  const closePeopleCategoryFilter = useCallback(() => setPeopleCatOpen(false), []);
   const openPeopleTechFilter = useCallback(() => setPeopleTechOpen(true), []);
   const closePeopleTechFilter = useCallback(() => setPeopleTechOpen(false), []);
 
@@ -48,6 +51,7 @@ export function ModalProvider({ children }) {
     openFeatured, closeFeatured, featuredOpen,
     openCategoryFilter, closeCategoryFilter, catOpen,
     openTechFilter, closeTechFilter, techOpen,
+    openPeopleCategoryFilter, closePeopleCategoryFilter, peopleCatOpen,
     openPeopleTechFilter, closePeopleTechFilter, peopleTechOpen
   };
 
@@ -63,6 +67,7 @@ export function ModalProvider({ children }) {
       {featuredOpen && <FeaturedModal />}
       {catOpen && <SelectFilterModal kind="category" />}
       {techOpen && <SelectFilterModal kind="tech" />}
+      {peopleCatOpen && <SelectFilterModal kind="peopleCategory" />}
       {peopleTechOpen && <SelectFilterModal kind="peopleTech" />}
       {createOpen && <CreateProjectModal />}
     </ModalContext.Provider>
